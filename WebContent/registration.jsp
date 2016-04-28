@@ -1,9 +1,10 @@
+<%@page import="java.util.Map"%>
 <%@page import="com.DBClasses.packg.DBConTest"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 
 <%
-	boolean result = false;
+	Map<String, String> result = null;
 	String userName = request.getParameter("userName");
 	String sampleValue = request.getParameter("password");
 	String confirmPass = request.getParameter("confirmPass");
@@ -12,7 +13,7 @@
 	if(sampleValue.equals(confirmPass)){
 		DBConTest conTest = new DBConTest();
 		result = conTest.executeMyQuery(userName, sampleValue,"insert");
-		if(result){%>
+		if(result.get("result").equalsIgnoreCase("true")){%>
 			<script>
 				alert("Successfully registered!!");
 			</script>

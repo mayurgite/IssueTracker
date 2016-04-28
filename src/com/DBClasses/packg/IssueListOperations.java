@@ -20,9 +20,10 @@ public class IssueListOperations {
 		//conTest.executeQuery("Mayur","Gite","select");
 	}
 
-	public boolean executeMyQuery(String username, String pass,String operation) {
+	public ResultSet executeMyQuery(String id, String operation,String issueName, String issueDesc, String status) {
 		System.out.println("In executeQuery()");
 		boolean result = false;
+		ResultSet rs = null;
 		try {
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 			con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
@@ -31,8 +32,7 @@ public class IssueListOperations {
 				if(operation.equalsIgnoreCase("select")){
 					Statement st = con.createStatement();
 					System.out.println("Executing SQL");
-					ResultSet rs = st.executeQuery("SELECT * FROM USERS WHERE UNAME='"+username+"'"
-							+ " AND PASSWORD='"+pass+"'");
+					rs = st.executeQuery("SELECT id,issueName,issueDesc FROM ISSUETRACKER WHERE USERID='"+id+"'");
 
 				    if (rs != null) {
 						result = true;
@@ -41,11 +41,11 @@ public class IssueListOperations {
 				}else if(operation.equalsIgnoreCase("insert")){
 					Statement st = con.createStatement();
 	
-					int rs = st.executeUpdate("INSERT INTO USERS"
-							+" (id,uname,password,status)"
-							+ " VALUES(user_sequence.nextval,'"+username+"','"+pass+"','"+"Active"+"')");
+					int rs1 = st.executeUpdate("INSERT INTO ISSUETRACKER"
+							+" (id,issueName,issueDescription,status)"
+							+ " VALUES(user_sequence.nextval,'"+id+"','"+issueName+"','"+issueDesc+"','"+"Active"+"')");
 	
-					if (rs > 0) {
+					if (rs1 > 0) {
 						result = true;
 				    }
 				}
@@ -53,16 +53,7 @@ public class IssueListOperations {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}finally{
-			if(con != null){
-				try {
-					con.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
 		}
-		return result;
+		return rs;
 	}
-
-
 }

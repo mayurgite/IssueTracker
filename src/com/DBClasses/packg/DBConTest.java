@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
 
 enum Sample {Test};
 
@@ -22,10 +24,10 @@ public class DBConTest {
 		conTest.executeMyQuery("Mayur","Gite","select");
 	}
 
-	public boolean executeMyQuery(String username, String pass,String operation) {
+	public Map<String, String> executeMyQuery(String username, String pass,String operation) {
 		System.out.println("In executeQuery()");
-		boolean result = false;
-
+		Map<String, String> result = new HashMap<String, String>();
+		
 		try {
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 			con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
@@ -37,13 +39,17 @@ public class DBConTest {
 					System.out.println("SELECT operation");
 					Statement st = con.createStatement();
 					System.out.println("Executing SQL");
-	ResultSet rs = st.executeQuery("SELECT * FROM USERS WHERE UNAME='"+username+"' AND PASSWORD='"+pass+"'");
-
-				    if (rs != null) {
-						System.out.println("Found result");
-						result = true;
-				    } else {
-				    	System.out.println("No result found");
+	ResultSet rs = st.executeQuery("SELECT id FROM USERS WHERE UNAME='"+username+"' AND PASSWORD='"+pass+"'");
+						
+					if (rs != null) {
+						System.out.println("RS is not empty");
+						result.put("result", "true");
+						  while (rs.next()) {
+							  System.out.println("ID: "+rs.getInt("id"));
+							  result.put("id", String.valueOf(rs.getInt("id"))); 
+						  }
+					} else {
+				    	result.put("result", "false");
 				    }
 			}else if(operation.equalsIgnoreCase("insert")){
 				System.out.println("INSERTING in DB");
@@ -56,8 +62,9 @@ public class DBConTest {
 				System.out.println("Executed query");
 			    if (rs > 0) {
 					System.out.println("Found result");
-					result = true;
+					result.put("result", "true");
 			    } else {
+			    	result.put("result", "false");
 			    	System.out.println("No result found");
 			    }
 			}
